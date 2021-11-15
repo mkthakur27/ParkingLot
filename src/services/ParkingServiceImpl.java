@@ -8,7 +8,7 @@ import java.util.Map;
 import model.ParkingLot;
 import model.Slot;
 import model.VehichleType;
-import utils.Contant;
+import utils.Constant;
 
 public class ParkingServiceImpl implements IparkingService {
 
@@ -38,20 +38,20 @@ public class ParkingServiceImpl implements IparkingService {
 	}
 
 	private void addTruckSlots(int floors) {
-		parkinglot.setTotalTruckSlots(Contant.TOTAL_SLOT_PER_FLOOR_TRUCK * floors);
-		addSlot(VehichleType.TRUCK, Contant.START_SLOT_TRUCK, Contant.TOTAL_SLOT_PER_FLOOR_TRUCK, floors);
+		parkinglot.setTotalTruckSlots(Constant.TOTAL_SLOT_PER_FLOOR_TRUCK * floors);
+		addSlot(VehichleType.TRUCK, Constant.START_SLOT_TRUCK, Constant.TOTAL_SLOT_PER_FLOOR_TRUCK, floors);
 	}
 
 	private void addBikeSlots(int floors) {
-		parkinglot.setTotalBikeSlots(Contant.TOTAL_SLOT_PER_FLOOR_BIKE * floors);
-		addSlot(VehichleType.BIKE, Contant.START_SLOT_BIKE, Contant.TOTAL_SLOT_PER_FLOOR_BIKE, floors);
+		parkinglot.setTotalBikeSlots(Constant.TOTAL_SLOT_PER_FLOOR_BIKE * floors);
+		addSlot(VehichleType.BIKE, Constant.START_SLOT_BIKE, Constant.TOTAL_SLOT_PER_FLOOR_BIKE, floors);
 	}
 
 	private void addCarSlots(int floors, int slotsPerFloor) {
 		int totalCarSlotsPerFloor = slotsPerFloor
-				- (Contant.TOTAL_SLOT_PER_FLOOR_TRUCK + Contant.TOTAL_SLOT_PER_FLOOR_BIKE);
+				- (Constant.TOTAL_SLOT_PER_FLOOR_TRUCK + Constant.TOTAL_SLOT_PER_FLOOR_BIKE);
 		parkinglot.setTotalCarSlots(floors * totalCarSlotsPerFloor);
-		addSlot(VehichleType.CAR, Contant.START_SLOT_CAR, totalCarSlotsPerFloor, floors);
+		addSlot(VehichleType.CAR, Constant.START_SLOT_CAR, totalCarSlotsPerFloor, floors);
 	}
 
 	public void createParkingLot(String id, int floor, int slotsPerFloor) {
