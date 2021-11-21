@@ -1,8 +1,9 @@
 package commandAndExecuter;
 
+
 public class UnparkBikeCommand implements Command {
 
-	String command;
+	String command="";
 	public UnparkBikeCommand(String command) {
 		super();
 		this.command = command;
@@ -10,7 +11,6 @@ public class UnparkBikeCommand implements Command {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

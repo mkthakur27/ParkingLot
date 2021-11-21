@@ -113,10 +113,10 @@ public class CommandFactory {
 		return null;
 	}
 	
-	public static Command parkVehicleCommand(String command)
+	public static Command getparkVehicleCommand(String command)
 	{
 		String[] commands = command.split(" ");
-		switch(commands[2])
+		switch(commands[1])
 		{
 		case "CAR":
 			return new ParkCarCommand(command);

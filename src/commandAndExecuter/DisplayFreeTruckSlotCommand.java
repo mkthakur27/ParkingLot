@@ -1,5 +1,6 @@
 package commandAndExecuter;
 
+import exception.ParkingLotNotInitialisedException;
 import model.VehichleType;
 import services.IparkingService;
 import services.ParkingServiceImpl;
@@ -11,7 +12,12 @@ public class DisplayFreeTruckSlotCommand implements Command {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		parkingService.displayFreeSlots(VehichleType.TRUCK);
+		try {
+			parkingService.displayFreeSlots(VehichleType.TRUCK);
+		} catch (ParkingLotNotInitialisedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

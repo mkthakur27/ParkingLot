@@ -1,5 +1,7 @@
 package commandAndExecuter;
 
+import commandFactoryPackage.CommandFactory;
+
 public class ParkVehicleCommand implements Command {
 
 	private String command;
@@ -10,6 +12,8 @@ public class ParkVehicleCommand implements Command {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
+		Command cmd = CommandFactory.getparkVehicleCommand(command);
+		cmd.execute();
 
 	}
 

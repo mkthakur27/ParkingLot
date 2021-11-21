@@ -1,18 +1,26 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import exception.InvalidTicketIdException;
+import exception.NoFreeSlotFoundException;
+import exception.ParkingLotNotInitialisedException;
 import model.ParkingLot;
 import model.Slot;
+import model.Ticket;
 import model.VehichleType;
+import model.Vehicle;
 import utils.Constant;
 
 public class ParkingServiceImpl implements IparkingService {
 
 	private ParkingLot parkinglot = ParkingLot.getinstance();
+	private IticketService ticketService = new TicketService();
 
 	public ParkingServiceImpl() {
 		// TODO Auto-generated constructor stub
@@ -62,8 +70,11 @@ public class ParkingServiceImpl implements IparkingService {
 	}
 
 	@Override
-	public void displayFreeSlots(VehichleType vehicleType) {
+	public void displayFreeSlots(VehichleType vehicleType) throws ParkingLotNotInitialisedException {
 		Map<Integer, List<Slot>> slots = parkinglot.getSlots();
+		if (slots.isEmpty() || slots == null) {
+			throw new ParkingLotNotInitialisedException("parking lot is not intialised");
+		}
 		String displayString = "";
 		for (Map.Entry<Integer, List<Slot>> entity : slots.entrySet()) {
 			String freeSlots = "";
@@ -76,9 +87,84 @@ public class ParkingServiceImpl implements IparkingService {
 					}
 			}
 			displayString += "Free Slots for " + vehicleType.toString() + " on Floor "
-					+ Integer.toString(entity.getKey()) + " : " + freeSlots +"\n";
+					+ Integer.toString(entity.getKey()) + " : " + freeSlots + "\n";
 		}
 		System.out.println(displayString);
 
+	}
+
+	@Override
+	public Ticket parkVehicle(String plateNumber, String color, VehichleType vehicleType)
+			throws NoFreeSlotFoundException, ParkingLotNotInitialisedException {
+
+		Slot slot = getFreeSlot(vehicleType);
+		if (slot == null) {
+			throw new NoFreeSlotFoundException("Slot is not available");
+		}
+		slot.setAvailable(false);
+		Vehicle vehicle = new Vehicle(plateNumber, color);
+		String ticketId = ticketService.generateTicketId(parkinglot.getId(), slot);
+		Date currTime = new Date();
+		Ticket ticket = new Ticket(ticketId, vehicle, slot, currTime);
+		ticketService.saveTicket(ticket);
+		return ticket;
+	}
+
+	private Slot getFreeSlot(VehichleType vehicleType) throws ParkingLotNotInitialisedException {
+		if (parkinglot.getSlots().isEmpty()) {
+			throw new ParkingLotNotInitialisedException("parking lot is not intialised");
+		}
+		for (Entry<Integer, List<Slot>> entity : parkinglot.getSlots().entrySet()) {
+			for (Slot slot : entity.getValue()) {
+				if (slot.getVehicleType().equals(vehicleType) && slot.isAvailable()) {
+					return slot;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void displayOccupiedSlots(VehichleType vehicleType) throws ParkingLotNotInitialisedException {
+		// TODO Auto-generated method stub
+		Map<Integer, List<Slot>> slots = parkinglot.getSlots();
+		if (slots.isEmpty() || slots == null) {
+			throw new ParkingLotNotInitialisedException("parking lot is not intialised");
+		}
+		String displayString = "";
+		for (Map.Entry<Integer, List<Slot>> entity : slots.entrySet()) {
+			String freeSlots = "";
+			for (Slot slot : entity.getValue()) {
+				if (!slot.isAvailable() && slot.getVehicleType().equals(vehicleType))
+					if (slot.getSerialNumber() != parkinglot.getSlotsPerFloor()) {
+						freeSlots += Integer.toString(slot.getSerialNumber()) + ", ";
+					} else {
+						freeSlots += Integer.toString(slot.getSerialNumber());
+					}
+			}
+			displayString += "Occupied Slots for " + vehicleType.toString() + " on Floor "
+					+ Integer.toString(entity.getKey()) + " : " + freeSlots + "\n";
+		}
+		System.out.println(displayString);
+
+	}
+
+	@Override
+	public void unParkVehicle(String ticketId) {
+		// TODO Auto-generated method stub
+		try {
+			Ticket ticket = ticketService.getTicket(ticketId);
+			Slot slot = ticket.getSlot();
+			slot.setAvailable(true);
+			Vehicle vehicle = ticket.getVehicle();
+			int cost = ticketService.getParkingCost(ticket);
+			System.out.println("Unparked vehicle with Registration Number: " + vehicle.getPlateNumber() + " and Color: "
+					+ vehicle.getColor() + " total cost: " + cost);
+			ticketService.deleteTicket(ticket);
+
+		} catch (InvalidTicketIdException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

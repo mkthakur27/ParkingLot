@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import exception.ParkingLotInitException;
+import exception.InvalidTicketIdException;
 
 public class ParkingLot {
 
@@ -103,7 +103,7 @@ public class ParkingLot {
 		if (parkingLot == null) {
 			parkingLot = new ParkingLot();
 		}
-		this.id = id;
+		this.setId(id);
 		this.numberOfFloors = numberOfFloors;
 		this.slotsPerFloor = slootsPerFloor;
 	}
@@ -114,5 +114,13 @@ public class ParkingLot {
 
 	public void setSlotsPerFloor(int slotsPerFloor) {
 		this.slotsPerFloor = slotsPerFloor;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }
